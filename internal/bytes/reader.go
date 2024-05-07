@@ -25,6 +25,12 @@ func (b *ByteReader) ReadString() string {
 	return str
 }
 
+func (b *ByteReader) ReadInt() int {
+	i := int(b.bytes[b.position])
+	b.position += 1
+	return i
+}
+
 func (b *ByteReader) Bytes() []byte {
 	return b.bytes
 }
@@ -33,6 +39,8 @@ func (b *ByteReader) Read(t any) {
 	switch v := t.(type) {
 	case *string:
 		*v = b.ReadString()
+	case *int:
+		*v = b.ReadInt()
 	default:
 		fmt.Println("Nope", t)
 	}
