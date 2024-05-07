@@ -92,3 +92,17 @@ func GetSqlColumnToFieldMap(model any) []any {
 	}
 	return s
 }
+
+// TODO::
+/*
+	Input bytearray and pointer to empty struct
+	Loop over fields in empty struct, find type and pointer.
+	Switch on type to use correct bytereader function and add result to pointer.
+
+	--
+
+	Input pointer to struct
+	Reverse for writing. Loop over fields in filled struct.
+	switch on type to use correct bytewriter function and input value in field.
+	Return bytearray
+*/
