@@ -1,4 +1,4 @@
-package bts
+package idkyet
 
 import (
 	"encoding/binary"
