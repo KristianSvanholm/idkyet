@@ -38,6 +38,7 @@ This project currently supports the following Golang datatypes
 - int64
 - float32
 - float64
+- string
 
 ## Planned support
 
