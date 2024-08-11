@@ -24,7 +24,7 @@ Consider the following data:
 
 ```
 
-The JSON for this equates to `64` bytes of data, lots of which is JSON garbage data such as quotes, colons, commas and the keyname data.  
+The JSON for this equates to `64` bytes of data, lots of which is JSON garbage data such as quotes, colons, commas and the key names.  
 The pure byte data however, is only `33` bytes long. A ~48.5% reduction!
 
 Great Success!
