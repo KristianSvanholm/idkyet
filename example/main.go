@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/kristiansvanholm/idkyet"
+	bts "github.com/kristiansvanholm/idkyet"
 )
 
 type Account struct {
