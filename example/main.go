@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	bts "serialization/internal/bytes"
+	"github.com/kristiansvanholm/idkyet"
 )
 
 type Account struct {
