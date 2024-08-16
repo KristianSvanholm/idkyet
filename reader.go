@@ -16,51 +16,50 @@ func NewReader(bytes []byte) ByteReader {
 	return ByteReader{bytes: bytes}
 }
 
-func (b *ByteReader) ReadString() string {
-	len := int(b.bytes[b.pos])
+func (b *ByteReader) r() byte {
+	v := b.bytes[b.pos]
 	b.pos += 1
+	return v
+}
 
-	str := string(b.bytes[b.pos : b.pos+len])
-
+func (b *ByteReader) rr(len int) []byte {
+	v := b.bytes[b.pos : b.pos+len]
 	b.pos += len
+	return v
+}
+
+// TODO:: Convert to use endOfString value to prevent i64 size bloat
+func (b *ByteReader) ReadString() string {
+	len := int(b.r())
+	str := string(b.rr(len))
 
 	return str
 }
 
 // TODO:: Might be able to consolidate some logic here for the int and float variations
 func (b *ByteReader) ReadInt8() int8 {
-	i := int8(b.bytes[b.pos])
-	b.pos += 1
-	return i
+	return int8(b.r())
 }
 
 func (b *ByteReader) ReadInt16() int16 {
-	i := int16(binary.LittleEndian.Uint16(b.bytes[b.pos : b.pos+2]))
-	b.pos += 2
-	return i
+	return int16(binary.LittleEndian.Uint16(b.rr(2)))
 }
 
 func (b *ByteReader) ReadInt32() int32 {
-	i := int32(binary.LittleEndian.Uint32(b.bytes[b.pos : b.pos+4]))
-	b.pos += 4
-	return i
+	return int32(binary.LittleEndian.Uint32(b.rr(4)))
 }
 
 func (b *ByteReader) ReadInt64() int64 {
-	i := int64(binary.LittleEndian.Uint64(b.bytes[b.pos : b.pos+8]))
-	b.pos += 8
-	return i
+	return int64(binary.LittleEndian.Uint64(b.rr(8)))
 }
 
 func (b *ByteReader) ReadFloat32() float32 {
-	bits := binary.LittleEndian.Uint32(b.bytes[b.pos : b.pos+4])
-	b.pos += 4
+	bits := binary.LittleEndian.Uint32(b.rr(4))
 	return math.Float32frombits(bits)
 }
 
 func (b *ByteReader) ReadFloat64() float64 {
-	bits := binary.LittleEndian.Uint64(b.bytes[b.pos : b.pos+8])
-	b.pos += 8
+	bits := binary.LittleEndian.Uint64(b.rr(8))
 	return math.Float64frombits(bits)
 }
 
