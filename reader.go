@@ -2,38 +2,55 @@ package idkyet
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"math"
 	"reflect"
 )
 
 type ByteReader struct {
-	bytes []byte
-	pos   int
+	bytes       []byte
+	pos         int
+	outOfBounds bool
+	count       int
 }
 
 func NewReader(bytes []byte) ByteReader {
-	return ByteReader{bytes: bytes}
+	return ByteReader{bytes: bytes, count: len(bytes)}
 }
 
 func (b *ByteReader) r() byte {
+	if b.pos >= b.count {
+		b.outOfBounds = true
+		return 0x0
+	}
 	v := b.bytes[b.pos]
 	b.pos += 1
 	return v
 }
 
 func (b *ByteReader) rr(len int) []byte {
+	if b.pos+len > b.count {
+		b.outOfBounds = true
+		return empty(len)
+	}
 	v := b.bytes[b.pos : b.pos+len]
 	b.pos += len
 	return v
 }
 
+// Retuens n long zeroed bytes buffer
+func empty(n int) []byte {
+	bytes := make([]byte, n)
+	for i := 0; i < n; i++ {
+		bytes[i] = 0x0
+	}
+	return bytes
+}
+
 // TODO:: Convert to use endOfString value to prevent i64 size bloat
 func (b *ByteReader) ReadString() string {
-	len := int(b.r())
-	str := string(b.rr(len))
-
-	return str
+	return string(b.rr(int(b.r())))
 }
 
 // TODO:: Might be able to consolidate some logic here for the int and float variations
@@ -88,12 +105,17 @@ func (b *ByteReader) Read(t any) {
 	}
 }
 
-func Decode(m any, b []byte) {
+func Decode(m any, b []byte) error {
 	br := NewReader(b)
 
 	v := reflect.ValueOf(m).Elem()
-
 	for i := 0; i < v.NumField(); i++ {
 		br.Read(v.Field(i).Addr().Interface())
+
+		if br.outOfBounds {
+			return errors.New("Attempted to read outside bytes buffer. Some fields may be empty.")
+		}
 	}
+
+	return nil
 }
