@@ -40,10 +40,11 @@ This project currently supports the following Golang datatypes
 - float64
 - string
 
++ structs within structs within structs
+
 ## Planned support
 
 - Arrays
-- Structs within structs within structs
 - Optional fields
 - Ignored fields
 

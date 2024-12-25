@@ -60,28 +60,36 @@ func (b *ByteWriter) WriteFloat64(f float64) {
 	b.w(buf[:]...)
 }
 
+func (b *ByteWriter) WriteStruct(v reflect.Value) {
+	for i := 0; i < v.NumField(); i++ {
+		b.Write(v.Field(i))
+	}
+}
+
 func (b *ByteWriter) Bytes() []byte {
 	return b.bytes
 }
 
-func (b *ByteWriter) Write(t any) {
-	switch v := t.(type) {
-	case *string:
-		b.WriteString(*v)
-	case *int8:
-		b.WriteInt8(*v)
-	case *int16:
-		b.WriteInt16(*v)
-	case *int32:
-		b.WriteInt32(*v)
-	case *int64:
-		b.WriteInt64(*v)
-	case *float32:
-		b.WriteFloat32(*v)
-	case *float64:
-		b.WriteFloat64(*v)
+func (b *ByteWriter) Write(t reflect.Value) {
+	switch t.Kind() {
+	case reflect.String:
+		b.WriteString(t.String())
+	case reflect.Int8:
+		b.WriteInt8(int8(t.Int()))
+	case reflect.Int16:
+		b.WriteInt16(int16(t.Int()))
+	case reflect.Int32:
+		b.WriteInt32(int32(t.Int()))
+	case reflect.Int64:
+		b.WriteInt64(t.Int())
+	case reflect.Float32:
+		b.WriteFloat32(float32(t.Float()))
+	case reflect.Float64:
+		b.WriteFloat64(t.Float())
+	case reflect.Struct:
+		b.WriteStruct(t)
 	default:
-		fmt.Println("Nope", t)
+		fmt.Println("Nope Write", t)
 	}
 }
 
@@ -90,9 +98,7 @@ func Encode(m any) []byte {
 
 	v := reflect.ValueOf(m).Elem()
 
-	for i := 0; i < v.NumField(); i++ {
-		bw.Write(v.Field(i).Addr().Interface())
-	}
+	bw.Write(v)
 
 	return bw.Bytes()
 }

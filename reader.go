@@ -80,11 +80,23 @@ func (b *ByteReader) ReadFloat64() float64 {
 	return math.Float64frombits(bits)
 }
 
+func (b *ByteReader) ReadStruct(v reflect.Value) {
+	for i := 0; i < v.NumField(); i++ {
+		b.Read(v.Field(i), v.Field(i).Addr().Interface())
+	}
+}
+
 func (b *ByteReader) Bytes() []byte {
 	return b.bytes
 }
 
-func (b *ByteReader) Read(t any) {
+func (b *ByteReader) Read(m reflect.Value, t any) {
+
+	if m.Kind() == reflect.Struct {
+		b.ReadStruct(m)
+		return
+	}
+
 	switch v := t.(type) {
 	case *string:
 		*v = b.ReadString()
@@ -101,7 +113,7 @@ func (b *ByteReader) Read(t any) {
 	case *float64:
 		*v = b.ReadFloat64()
 	default:
-		fmt.Println("Nope", t)
+		fmt.Println("Nope Read", t)
 	}
 }
 
@@ -110,7 +122,7 @@ func Decode(m any, b []byte) error {
 
 	v := reflect.ValueOf(m).Elem()
 	for i := 0; i < v.NumField(); i++ {
-		br.Read(v.Field(i).Addr().Interface())
+		br.Read(v.Field(i), v.Field(i).Addr().Interface())
 
 		if br.outOfBounds {
 			return errors.New("Attempted to read outside bytes buffer. Some fields may be empty.")
