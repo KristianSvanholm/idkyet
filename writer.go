@@ -79,6 +79,15 @@ func (b *ByteWriter) WriteSlice(v reflect.Value) {
 	}
 }
 
+func (b *ByteWriter) WriteMap(v reflect.Value) {
+	b.w(byte(v.Len()))
+	iter := v.MapRange()
+	for iter.Next() {
+		b.Write(iter.Key())
+		b.Write(iter.Value())
+	}
+}
+
 func (b *ByteWriter) Bytes() []byte {
 	return b.bytes
 }
@@ -93,7 +102,7 @@ func (b *ByteWriter) Write(t reflect.Value) {
 		b.WriteInt16(int16(t.Int()))
 	case reflect.Int32:
 		b.WriteInt32(int32(t.Int()))
-	case reflect.Int64:
+	case reflect.Int64, reflect.Int:
 		b.WriteInt64(t.Int())
 	case reflect.Float32:
 		b.WriteFloat32(float32(t.Float()))
@@ -105,6 +114,8 @@ func (b *ByteWriter) Write(t reflect.Value) {
 		b.WriteArray(t)
 	case reflect.Slice:
 		b.WriteSlice(t)
+	case reflect.Map:
+		b.WriteMap(t)
 	default:
 		fmt.Println("Nope Write", t)
 	}

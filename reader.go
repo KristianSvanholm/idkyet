@@ -103,6 +103,19 @@ func (b *ByteReader) ReadSlice(v reflect.Value) {
 	}
 }
 
+func (b *ByteReader) ReadMap(v reflect.Value) {
+	l := int(b.r())
+	v.Set(reflect.MakeMap(v.Type()))
+	keyval := reflect.Indirect(reflect.New(v.Type().Key()))
+	elemval := reflect.Indirect(reflect.New(v.Type().Elem()))
+	for i := 0; i < l; i++ {
+		b.Read(keyval)
+		b.Read(elemval)
+		v.SetMapIndex(keyval, elemval)
+	}
+
+}
+
 func (b *ByteReader) Bytes() []byte {
 	return b.bytes
 }
@@ -120,7 +133,7 @@ func (b *ByteReader) Read(v reflect.Value) {
 		nv.SetInt(int64(b.ReadInt16()))
 	case reflect.Int32:
 		nv.SetInt(int64(b.ReadInt32()))
-	case reflect.Int64:
+	case reflect.Int64, reflect.Int:
 		nv.SetInt(b.ReadInt64())
 	case reflect.Float32:
 		nv.SetFloat(float64(b.ReadFloat32()))
@@ -132,6 +145,8 @@ func (b *ByteReader) Read(v reflect.Value) {
 		b.ReadArray(nv)
 	case reflect.Slice:
 		b.ReadSlice(nv)
+	case reflect.Map:
+		b.ReadMap(nv)
 	default:
 		fmt.Println("Nope Read", v)
 	}

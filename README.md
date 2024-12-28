@@ -41,6 +41,7 @@ This project currently supports the following Golang datatypes
 - string
 - array
 - slice
+- Map
 
 + structs within structs within structs
 
