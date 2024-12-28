@@ -72,6 +72,13 @@ func (b *ByteWriter) WriteArray(v reflect.Value) {
 	}
 }
 
+func (b *ByteWriter) WriteSlice(v reflect.Value) {
+	b.w(byte(v.Len()))
+	for i := 0; i < v.Len(); i++ {
+		b.Write(v.Index(i))
+	}
+}
+
 func (b *ByteWriter) Bytes() []byte {
 	return b.bytes
 }
@@ -96,6 +103,8 @@ func (b *ByteWriter) Write(t reflect.Value) {
 		b.WriteStruct(t)
 	case reflect.Array:
 		b.WriteArray(t)
+	case reflect.Slice:
+		b.WriteSlice(t)
 	default:
 		fmt.Println("Nope Write", t)
 	}

@@ -40,12 +40,13 @@ This project currently supports the following Golang datatypes
 - float64
 - string
 - array
+- slice
 
 + structs within structs within structs
 
 ## Known issues / Future improvements
 
-- String length is capped at 1 byte / 255 elements
+- String & slice length is capped at 1 byte / 255 elements
 - treating all numbers as varint could drastically reduce size in real world scenarios
 
 ## Planned support

@@ -93,6 +93,16 @@ func (b *ByteReader) ReadArray(v reflect.Value) {
 	}
 }
 
+func (b *ByteReader) ReadSlice(v reflect.Value) {
+	l := int(b.r())
+
+	v.Set(reflect.MakeSlice(v.Type(), l, l))
+
+	for i := 0; i < l; i++ {
+		b.Read(v.Index(i))
+	}
+}
+
 func (b *ByteReader) Bytes() []byte {
 	return b.bytes
 }
@@ -120,6 +130,8 @@ func (b *ByteReader) Read(v reflect.Value) {
 		b.ReadStruct(nv)
 	case reflect.Array:
 		b.ReadArray(nv)
+	case reflect.Slice:
+		b.ReadSlice(nv)
 	default:
 		fmt.Println("Nope Read", v)
 	}
