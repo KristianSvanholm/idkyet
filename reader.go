@@ -87,6 +87,12 @@ func (b *ByteReader) ReadStruct(v reflect.Value) {
 	}
 }
 
+func (b *ByteReader) ReadArray(v reflect.Value) {
+	for i := 0; i < v.Type().Len(); i++ {
+		b.Read(v.Index(i))
+	}
+}
+
 func (b *ByteReader) Bytes() []byte {
 	return b.bytes
 }
@@ -112,6 +118,8 @@ func (b *ByteReader) Read(v reflect.Value) {
 		nv.SetFloat(b.ReadFloat64())
 	case reflect.Struct:
 		b.ReadStruct(nv)
+	case reflect.Array:
+		b.ReadArray(nv)
 	default:
 		fmt.Println("Nope Read", v)
 	}

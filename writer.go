@@ -66,6 +66,12 @@ func (b *ByteWriter) WriteStruct(v reflect.Value) {
 	}
 }
 
+func (b *ByteWriter) WriteArray(v reflect.Value) {
+	for i := 0; i < v.Type().Len(); i++ {
+		b.Write(v.Index(i))
+	}
+}
+
 func (b *ByteWriter) Bytes() []byte {
 	return b.bytes
 }
@@ -88,6 +94,8 @@ func (b *ByteWriter) Write(t reflect.Value) {
 		b.WriteFloat64(t.Float())
 	case reflect.Struct:
 		b.WriteStruct(t)
+	case reflect.Array:
+		b.WriteArray(t)
 	default:
 		fmt.Println("Nope Write", t)
 	}

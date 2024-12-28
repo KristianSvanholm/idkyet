@@ -39,12 +39,17 @@ This project currently supports the following Golang datatypes
 - float32
 - float64
 - string
+- array
 
 + structs within structs within structs
 
+## Known issues / Future improvements
+
+- String length is capped at 1 byte / 255 elements
+- treating all numbers as varint could drastically reduce size in real world scenarios
+
 ## Planned support
 
-- Arrays
 - Optional fields
 - Ignored fields
 
